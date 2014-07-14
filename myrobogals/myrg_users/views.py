@@ -9,6 +9,8 @@ from django.db import transaction
 from .models import RobogalsUser
 from .serializers import RobogalsUserSerializer
 
+from myrg_core.functions import login_record
+
 
 PAGINATION_MAX_LENGTH = 1000
 
@@ -128,6 +130,11 @@ class ListUsers(APIView):
                             },
                             "user": output_user_list
                         })
+                        
+    def get(self, request, format=None):
+        data = login_record(request)
+        return Response(data)
+        
 
 class DeleteUsers(APIView):
     def metadata(self, request):
