@@ -12,7 +12,7 @@ from myrg_groups.models import Role
 #from myrg_groups.serializers import RoleSerializer
 
 from .models import APILog
-from rest_framework import serializers
+from rest_framework import serializers, status
 
 def log(request, note = None):
     log_dict = {
@@ -54,7 +54,7 @@ class RoleSerializer(serializers.ModelSerializer):
 def login_record(request):
     
     #initialise variables 
-    user_role = ""
+    user_role = []
     ip_address = ""
     api_url = ""
     api_body = "" 
@@ -69,7 +69,7 @@ def login_record(request):
        role_serializer_query = RoleSerializer(Role.objects.filter(user = user_id))
        json_user_role = role_serializer_query.data
        for field_object in json_user_role:
-            user_role = field_object.get("id")
+            user_role.append(field_object.get("id"))
        
        #ip_address
        ip_address = get_client_ip(request)
@@ -96,7 +96,7 @@ def login_record(request):
        serializer.save()
        return (content, serializer.data)
     else:
-       return (content, serializer.data)
+       return (content, serializer.data, serializer.errors, status.HTTP_400_BAD_REQUEST)
     
     #return content
     
